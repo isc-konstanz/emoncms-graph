@@ -49,29 +49,29 @@
 
 <div id="wrapper">
     <div id="sidebar-wrapper">
-            <div style="padding-left:10px;">
-                <div id="sidebar-close" style="float:right; cursor:pointer; padding:10px;"><i class="icon-remove"></i></div>
-                <h3><?php echo _('Feeds') ?></h3>
-                
-            </div>
-            <div style="overflow-x: hidden; background-color:#f3f3f3; width:100%">
-                <table class="table" id="feeds">
-                </table>
-            </div>
+        <div style="padding-left:10px;">
+            <div id="sidebar-close" style="float:right; cursor:pointer; padding:10px;"><i class="icon-remove"></i></div>
+            <h3><?php echo _('Feeds') ?></h3>
             
-            <div id="mygraphs" style="padding:10px;">
-                <h4><?php echo _('My Graphs') ?></h4>
-                
-                <select id="graph-select" style="width:215px">
-                </select>
-                
-                <br><br>
-                <b><?php echo _('Graph Name') ?>:</b><br>
-                <input id="graph-name" type="text" style="width:200px" />
-                <div id="selected-graph-id" style="font-size:10px"><?php echo _('Selected graph id') ?>: <span id="graph-id"><?php echo _('None selected') ?></span></div>
-                <button id="graph-delete" class="btn" style="display:none"><?php echo _('Delete') ?></button>
-                <button id="graph-save" class="btn"><?php echo _('Save') ?></button>
-            </div>
+        </div>
+        <div style="overflow-x: hidden; background-color:#f3f3f3; width:100%">
+            <table class="table" id="feeds">
+            </table>
+        </div>
+        
+        <div id="mygraphs" style="padding:10px;">
+            <h4><?php echo _('My Graphs') ?></h4>
+            
+            <select id="graph-select" style="width:215px">
+            </select>
+            
+            <br><br>
+            <b><?php echo _('Graph Name') ?>:</b><br>
+            <input id="graph-name" type="text" style="width:200px" />
+            <div id="selected-graph-id" style="font-size:10px"><?php echo _('Selected graph id') ?>: <span id="graph-id"><?php echo _('None selected') ?></span></div>
+            <button id="graph-delete" class="btn" style="display:none"><?php echo _('Delete') ?></button>
+            <button id="graph-save" class="btn"><?php echo _('Save') ?></button>
+        </div>
     </div>
 
     <div id="page-content-wrapper" style="max-width:1280px">
@@ -82,20 +82,20 @@
 
         <div id="navigation" style="padding-bottom:5px;">
             <button class="btn" id="sidebar-open"><i class="icon-list"></i></button>
-            <button class='btn graph_time' type='button' time='1' title="<?php echo _('Day') ?>"><?php echo _('D') ?></button>
-            <button class='btn graph_time' type='button' time='7' title="<?php echo _('Week') ?>"><?php echo _('W') ?></button>
-            <button class='btn graph_time' type='button' time='30' title="<?php echo _('Month') ?>"><?php echo _('M') ?></button>
-            <button class='btn graph_time' type='button' time='365' title="<?php echo _('Year') ?>"><?php echo _('Y') ?></button>
-            <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>">+</button>
-            <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>">-</button>
-            <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><</button>
-            <button id='graph_right' class='btn' title="<?php echo _('Later') ?>">></button>
+            <button class='btn graph_time' type='button' time='1' title="<?php echo _('Day') ?>"><b><?php echo _('D') ?></b></button>
+            <button class='btn graph_time' type='button' time='7' title="<?php echo _('Week') ?>"><b><?php echo _('W') ?></b></button>
+            <button class='btn graph_time' type='button' time='30' title="<?php echo _('Month') ?>"><b><?php echo _('M') ?></b></button>
+            <button class='btn graph_time' type='button' time='365' title="<?php echo _('Year') ?>"><b><?php echo _('Y') ?></b></button>
+            <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><span class="icon-plus"></span></button>
+            <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><span class="icon-minus"></span></button>
+            <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><span class="icon-chevron-left"></span></button>
+            <button id='graph_right' class='btn' title="<?php echo _('Later') ?>"><span class="icon-chevron-right"></span></button>
             
             <div class="input-prepend input-append" style="float:right; margin-right:22px">
             <span class="add-on"><?php echo _('Show') ?></span>
-            <span class="add-on"><?php echo _('missing data') ?>: <input type="checkbox" id="showmissing" style="margin-top:1px" /></span>
-            <span class="add-on"><?php echo _('legend') ?>: <input type="checkbox" id="showlegend" style="margin-top:1px" /></span>
-            <span class="add-on"><?php echo _('feed tag') ?>: <input type="checkbox" id="showtag" style="margin-top:1px" /></span>
+            <span class="add-on"><?php echo _('missing data') ?>: <input type="checkbox" id="showmissing"/></span>
+            <span class="add-on"><?php echo _('legend') ?>: <input type="checkbox" id="showlegend"/></span>
+            <span class="add-on"><?php echo _('feed tag') ?>: <input type="checkbox" id="showtag"/></span>
             </div>
             
             <div style="clear:both"></div>
@@ -147,14 +147,10 @@
                     <option><?php echo _('Monthly') ?></option>
                     <option><?php echo _('Annual') ?></option>
                 </select>
-                
-            </div>
-            <div class="input-prepend input-append" style="padding-right:5px">
-                
                 <span class="fixed-interval-options">
-                    <input id="request-interval" type="text" style="width:60px" />
-                    <span class="add-on"><?php echo _('Fix') ?> <input id="request-fixinterval" type="checkbox" style="margin-top:1px" /></span>
-                    <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox" style="margin-top:1px" /></span>
+                    <input id="request-interval" type="text" style="width:60px;text-align:right;" />
+                    <span class="add-on"><?php echo _('Fix') ?> <input id="request-fixinterval" type="checkbox" /></span>
+                    <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox"/></span>
                 </span>
             </div>
             
@@ -181,7 +177,7 @@
                     </a>
                 </div>
 
-                <div id="tables" class="collapse">
+                <div id="tables" class="feed-options-body collapse">
                     <table id="feed-options-table" class="table">
                         <tr>
                             <th></th>
@@ -308,43 +304,43 @@
         var urlparts = window.location.pathname.split("graph/");
         if (urlparts.length==2) {
             var feedids = urlparts[1].split(",");
-		        for (var z in feedids) {
-		            var feedid = parseInt(feedids[z]);
-		             
-		            if (feedid) {
-		                var f = getfeed(feedid);
+	        for (var z in feedids) {
+	            var feedid = parseInt(feedids[z]);
+	             
+	            if (feedid) {
+	                var f = getfeed(feedid);
                     if (f==false) f = getfeedpublic(feedid);
                     if (f!=false) feedlist.push({id:feedid, name:f.name, tag:f.tag, yaxis:1, fill:0, scale: 1.0, delta:false, dp:1, plottype:'lines'});
-			          }		
-		        }
+		        }		
+	        }
         }
         
         // Left hand feed ids property
         if (feedidsLH!="") {
             var feedids = feedidsLH.split(",");
-		        for (var z in feedids) {
-		            var feedid = parseInt(feedids[z]);
-		             
-		            if (feedid) {
-		                var f = getfeed(feedid);
+	        for (var z in feedids) {
+	            var feedid = parseInt(feedids[z]);
+	             
+	            if (feedid) {
+	                var f = getfeed(feedid);
                     if (f==false) f = getfeedpublic(feedid);
                     if (f!=false) feedlist.push({id:feedid, name:f.name, tag:f.tag, yaxis:1, fill:0, scale: 1.0, delta:false, dp:1, plottype:'lines'});
-			          }		
-		        }
+		        }		
+	        }
         }
 
         // Right hand feed ids property
         if (feedidsRH!="") {
             var feedids = feedidsRH.split(",");
-		        for (var z in feedids) {
-		            var feedid = parseInt(feedids[z]);
-		             
-		            if (feedid) {
-		                var f = getfeed(feedid);
+	        for (var z in feedids) {
+	            var feedid = parseInt(feedids[z]);
+	             
+	            if (feedid) {
+	                var f = getfeed(feedid);
                     if (f==false) f = getfeedpublic(feedid);
                     if (f!=false) feedlist.push({id:feedid, name:f.name, tag:f.tag, yaxis:2, fill:0, scale: 1.0, delta:false, dp:1, plottype:'lines'});
-			          }		
-		        }
+	            }		
+	        }
         }
     }
     

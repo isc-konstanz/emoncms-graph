@@ -841,7 +841,7 @@ function graph_draw()
         var label = "";
         if (showtag) label += feedlist[z].tag+": ";
         label += feedlist[z].name;
-        label += ' '+getFeedUnit(feedlist[z].id);
+        label += ' ['+getFeedUnit(feedlist[z].id)+']';
         var stacked = (typeof(feedlist[z].stack) !== "undefined" && feedlist[z].stack);
         var plot = {label:label, data:data, yaxis:feedlist[z].yaxis, color: feedlist[z].color, stack: stacked};
         
@@ -875,7 +875,7 @@ function graph_draw()
             }
             out += "</td>";
 
-            out += "<td>"+feedlist[z].id+":"+feedlist[z].tag+":"+feedlist[z].name + getFeedUnit(feedlist[z].id)+"</td>";
+            out += "<td>"+feedlist[z].id+": "+feedlist[z].tag+": "+feedlist[z].name+" ["+getFeedUnit(feedlist[z].id)+"]</td>";
             out += "<td><select class='plottype' feedid="+feedlist[z].id+" style='width:80px'>";
 
             var selected = "";
