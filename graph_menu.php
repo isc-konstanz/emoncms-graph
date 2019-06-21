@@ -5,7 +5,7 @@
         'path' => 'graph',
         'active'=>'graph',
         'icon' => 'show_chart',
-        'order' => 2,
+        'order' => 20,
         'li_id' => 'graph-link',
         'data'=> array('sidebar' => '#sidebar_graph')
     );
