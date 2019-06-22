@@ -49,10 +49,10 @@
     <div id="error" style="display:none"></div>
 
     <div id="navigation" style="padding-bottom:5px;">
-        <button class='btn graph_time' type='button' time='1' title="<?php echo _('Day') ?>"><b><?php echo _('D') ?></b></button>
-        <button class='btn graph_time' type='button' time='7' title="<?php echo _('Week') ?>"><b><?php echo _('W') ?></b></button>
-        <button class='btn graph_time' type='button' time='30' title="<?php echo _('Month') ?>"><b><?php echo _('M') ?></b></button>
-        <button class='btn graph_time' type='button' time='365' title="<?php echo _('Year') ?>"><b><?php echo _('Y') ?></b></button>
+        <button class='btn graph_time' type='button' data-time='1' title="<?php echo _('Day') ?>"><b><?php echo _('D') ?></b></button>
+        <button class='btn graph_time' type='button' data-time='7' title="<?php echo _('Week') ?>"><b><?php echo _('W') ?></b></button>
+        <button class='btn graph_time' type='button' data-time='30' title="<?php echo _('Month') ?>"><b><?php echo _('M') ?></b></button>
+        <button class='btn graph_time' type='button' data-time='365' title="<?php echo _('Year') ?>"><b><?php echo _('Y') ?></b></button>
         <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><span class="icon-plus"></span></button>
         <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><span class="icon-minus"></span></button>
         <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><span class="icon-chevron-left"></span></button>
@@ -120,8 +120,8 @@
             
             <span class="fixed-interval-options">
                 <input id="request-interval" type="text" style="width:60px" />
-                <span class="add-on"><?php echo _('Fix') ?> <input id="request-fixinterval" type="checkbox" style="margin-top:1px" /></span>
-                <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox" style="margin-top:1px" /></span>
+                <span class="add-on"><?php echo _('Fix') ?> <input id="request-fixinterval" type="checkbox" /></span>
+                <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox" /></span>
             </span>
         </div>
         <div class="input-prepend input-append" style="padding-right:5px">

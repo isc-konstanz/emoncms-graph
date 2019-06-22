@@ -52,14 +52,6 @@
 .feed-options {
     background-color:#eee;
 }
-table#feeds thead tr th .caret{
-    border-top-color: black!important;
-    vertical-align: middle;
-    margin-right: 10px;
-}
-table#feeds tbody tr th {
-    font-weight: normal
-}
 .feed-options-header {
     height:40px;
     background-color:#ccc;
@@ -209,36 +201,35 @@ input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
     outline: none;
 }
 
-table#feeds.table thead th{
-    border-top: 4px solid #333;
+/*
+table#feeds.table thead tr th:hover {
+    text-decoration: underline;
+}
+*/
+table#feeds.table thead tr th {
+    border-top: 4px solid transparent;
     font-weight: normal !important;
-    color: #adadad;
     cursor: pointer;
     transition: all .3s ease-in;
     padding-left: 0;
 }
-table#feeds.table thead th:hover{
-    color: #f8f9fa;
-    text-decoration: underline;
+table#feeds.table input[type="checkbox"] {
+    margin: 0;
 }
-table#feeds.table input[type="checkbox"] { margin: 0 }
-table#feeds.table tbody tr > *{
-    border-color: #444;
+table#feeds.table tbody tr {
+    padding-left: 10px;
 }
-table#feeds.table tbody tr th{
+table#feeds.table tbody tr th {
     cursor: pointer;
-    transition: all .3s ease-in;
+    padding-left: 25px;
     font-weight: normal;
+    transition: all .3s ease-in;
 }
-table#feeds.table tbody tr th:hover{
-    text-decoration: underline;
+table#feeds.table tbody tr th.feed-title span {
+    vertical-align: middle;
+    max-width: 9em;
 }
-table#feeds.table tbody tr th.feed-title span{
-    max-width:9em;
-}
-
 table#feeds.table .caret {
-    border-top-color: currentColor !important;
     display: inline-block;
     vertical-align: middle;
     margin-right: .4em;
