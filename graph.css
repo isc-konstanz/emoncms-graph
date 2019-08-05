@@ -181,10 +181,10 @@ input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
     top: 0
 }
 #legend .right{
-    right: .8em;
+    right: 1em;
 }
 #legend .left{
-    left: 0;
+    left: 1em;
 }
 #legend .legendColorBox {
     display: inline-block;
