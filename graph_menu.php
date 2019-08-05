@@ -1,11 +1,13 @@
 <?php
-    $domain = "messages";
-    bindtextdomain($domain, "Modules/graph/locale");
-    bind_textdomain_codeset($domain, 'UTF-8');
-    $menu_dropdown[] = array(
-        'name'=> dgettext($domain,"Graphs"),
-        'icon'=>'icon-list-alt',
-        'path'=>"graph",
-        'session'=>"read",
-        'order' => 20
+
+    $menu['sidebar']['emoncms'][] = array(
+        'text' => _("Graphs"),
+        'path' => 'graph',
+        'active'=>'graph',
+        'icon' => 'show_chart',
+        'order' => 20,
+        'li_id' => 'graph-link',
+        'data'=> array('sidebar' => '#sidebar_graph')
     );
+
+    $menu['sidebar']['includes']['emoncms']['graph'] = view('Modules/graph/Views/sidebar.php',array());

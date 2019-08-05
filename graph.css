@@ -13,6 +13,7 @@
     position: fixed;
     overflow-y: auto;
     z-index: 1000;
+    height: 100%;
 }
 
 #page-content-wrapper {
@@ -20,10 +21,37 @@
     padding-left:0px;
 }
 
+#sub_nav li{
+    transition: all .2s ease-out;
+    height: 0;
+    border-bottom-width: 0;
+    overflow: hidden;
+}
+/* show all menu items when 'in' class added */
+#sub_nav.in li,
+#sub_nav li.active{
+    height: 3.125rem;
+    border-bottom-width: 1px;
+}
+
+/* sidebar #mygraphs */
+#graph-list{
+    width: 14rem;
+    overflow: hidden;
+    position: relative;
+    /* margin-bottom: 3rem; */
+}
+#graph-list input{
+    width:12rem;
+}
+#graph-list select{
+    width:13rem;
+}
+/* end of sidebar #mygraphs */
+
 .feed-options {
     background-color:#eee;
 }
-
 .feed-options-header {
     height:40px;
     background-color:#ccc;
@@ -78,11 +106,11 @@
 }
 
 #group-table .user-name{
-    font-size:12px; 
-    padding:4px; 
-    padding-left:8px; 
+    font-size:12px;
+    padding:4px;
+    padding-left:8px;
     font-weight:bold;
-    background-color:#aaa; 
+    background-color:#aaa;
     cursor:pointer
 }
 
@@ -107,11 +135,11 @@
 
 .feed-tag{
     padding:5px 0 1px 5px;
-    margin:0px 0px 2px 3px;
+    margin:0 0 2px 3px;
     cursor: pointer
 }
 
-input.feed-tag-checkbox{
+.feed-tag-checkbox{
     margin:5px;
 }
 
@@ -153,10 +181,10 @@ input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
     top: 0
 }
 #legend .right{
-    right: .8em;
+    right: 1em;
 }
 #legend .left{
-    left: 0;
+    left: 1em;
 }
 #legend .legendColorBox {
     display: inline-block;
@@ -172,6 +200,60 @@ input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
 #legend [data-legend-series] a{
     outline: none;
 }
+
+/*
+table#feeds.table thead tr th:hover {
+    text-decoration: underline;
+}
+*/
+table#feeds.table thead tr th {
+    border-top: 4px solid transparent;
+    font-weight: normal !important;
+    cursor: pointer;
+    transition: all .3s ease-in;
+    padding-left: 0;
+}
+table#feeds.table input[type="checkbox"] {
+    margin: 0;
+}
+table#feeds.table tbody tr {
+    padding-left: 10px;
+}
+table#feeds.table tbody tr th {
+    cursor: pointer;
+    padding-left: 25px;
+    font-weight: normal;
+    transition: all .3s ease-in;
+}
+table#feeds.table tbody tr th.feed-title span {
+    vertical-align: middle;
+    max-width: 9em;
+}
+table#feeds.table .caret {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .4em;
+}
+
+#graph-wrapper{
+    transition: all .3s ease-out;
+}
+#graph-wrapper.empty{
+    opacity: .3;
+    transform: scale(.99);
+}
+#download-buttons form{
+    margin: 0;
+    padding: 0;
+}
+#download-buttons form button {
+    width: 100%;
+    text-align: left;
+}
+.csvoptions{
+    width: auto;
+}
+
 @media(max-width: 512px) {
     #legend .col {
         position: relative; left: 0;

@@ -18,6 +18,8 @@ var showlegend = true;
 var floatingtime=1;
 var yaxismin="auto";
 var yaxismax="auto";
+var yaxismin2="auto";
+var yaxismax2="auto";
 
 var csvtimeformat="datestr";
 var csvnullvalues="show";
@@ -26,6 +28,8 @@ var csvheaders="showNameTag";
 var previousPoint = 0;
 
 var active_histogram_feed = 0;
+
+var _TIMEZONE = null;
 
 $("#info").show();
 if ($("#showmissing")[0]!=undefined) $("#showmissing")[0].checked = showmissing;
@@ -38,7 +42,7 @@ $('#graph_right').click(function () {floatingtime=0; view.panright(); graph_relo
 $('#graph_left').click(function () {floatingtime=0; view.panleft(); graph_reloaddraw();});
 $('.graph_time').click(function () {
     floatingtime=1; 
-    view.timewindow($(this).attr("time")); 
+    view.timewindow($(this).data("time")); 
     graph_reloaddraw();
 });
 
@@ -87,7 +91,6 @@ $('#placeholder').bind("plothover", function (event, pos, item) {
 });
 
 $(window).resize(function(){
-    if (!embed) sidebar_resize();
     graph_resize();
     graph_draw();
 });
@@ -106,7 +109,6 @@ function graph_resize() {
     placeholder_bound.height(height-top_offset);
     placeholder.height(height-top_offset);
 }
-
 function datetimepickerInit()
 {
     $("#datetimepicker1").datetimepicker({
@@ -244,18 +246,22 @@ function graph_init_editor()
     for (var tag in feedsbytag) {
        tagname = tag;
        if (tag=="") tagname = "undefined";
-       out += "<tr class='tagheading' tag='"+tagname+"' style='background-color:#aaa; cursor:pointer'><td style='font-size:12px; padding:4px; padding-left:8px; font-weight:bold'>"+tagname+"</td><td></td><td></td></tr>";
-       out += "<tbody class='tagbody' tag='"+tagname+"'>";
+       out += "<thead>";
+       out += "<tr class='tagheading' data-tag='"+tagname+"' tabindex='0'>";
+       out += "<th colspan='3'><span class='caret'></span>"+tagname+"</th>";
+       out += "</tr>";
+       out += "</thead>";
+       out += "<tbody class='tagbody' data-tag='"+tagname+"'>";
        for (var z in feedsbytag[tag]) 
        {
            out += "<tr>";
            var name = feedsbytag[tag][z].name;
-           if (name.length>20) {
+           if (name && name.length>20) {
                name = name.substr(0,20)+"..";
            }
-           out += "<td>"+name+"</td>";
-           out += "<td><input class='feed-select-left' feedid="+feedsbytag[tag][z].id+" type='checkbox'></td>";
-           out += "<td><input class='feed-select-right' feedid="+feedsbytag[tag][z].id+" type='checkbox'></td>";
+           out += "<th class='feed-title' title='"+name+"' data-feedid='"+feedsbytag[tag][z].id+"' tabindex='0'><span class='text-truncate d-inline-block'>"+name+"</span></th>";
+           out += "<td><input class='feed-select-left' data-feedid='"+feedsbytag[tag][z].id+"' type='checkbox'></td>";
+           out += "<td><input class='feed-select-right' data-feedid='"+feedsbytag[tag][z].id+"' type='checkbox'></td>";
            out += "</tr>";
        }
        out += "</tbody>";
@@ -353,8 +359,16 @@ function graph_init_editor()
         graph_draw();
     });
 
+    $("body").on("click keyup",".feed-title", function(event){
+        let enterKey = 13;
+        if((event.type === 'keyup' && event.which === enterKey) || event.type === 'click') {
+            var feedid = $(this).data("feedid");
+            $('.feed-select-left[data-feedid="' + feedid + '"]').click();
+            event.preventDefault();
+        }
+    });
     $("body").on("click",".feed-select-left",function(){
-        var feedid = $(this).attr("feedid");
+        var feedid = $(this).data("feedid");
         var checked = $(this)[0].checked;
         
         var loaded = false;
@@ -365,7 +379,7 @@ function graph_init_editor()
                } else {
                    feedlist[z].yaxis = 1;
                    loaded = true;
-                   $(".feed-select-right[feedid="+feedid+"]")[0].checked = false;
+                   $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = false;
                }
            }
         }
@@ -379,7 +393,7 @@ function graph_init_editor()
     });
 
     $("body").on("click",".feed-select-right",function(){
-        var feedid = $(this).attr("feedid");
+        var feedid = $(this).data("feedid");
         var checked = $(this)[0].checked;
         
         var loaded = false;
@@ -390,7 +404,7 @@ function graph_init_editor()
                } else {
                    feedlist[z].yaxis = 2;
                    loaded = true;
-                   $(".feed-select-left[feedid="+feedid+"]")[0].checked = false;
+                   $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = false;
                }
            }
         }
@@ -400,10 +414,16 @@ function graph_init_editor()
         graph_reloaddraw();
     });
     
-    $("body").on("click",".tagheading",function(){
-        var tag = $(this).attr("tag");
-        var e = $(".tagbody[tag='"+tag+"']");
-        if (e.is(":visible")) e.hide(); else e.show();
+    $("body").on("click keyup",".tagheading",function(event){
+        let enterKey = 13;
+        // console.log(event.type,event.which);
+
+        if((event.type === 'keyup' && event.which === enterKey) || event.type === 'click') {
+            var tag = $(this).data("tag");
+            var e = $(".tagbody[data-tag='"+tag+"']");
+            if (e.is(":visible")) e.hide(); else e.show();
+            event.preventDefault();
+        }
     });
 
     $("#showmissing").click(function(){
@@ -481,7 +501,7 @@ function graph_init_editor()
             }
         }
     });
-    
+    // left axis
     $("body").on("change","#yaxis-min",function(){
         yaxismin = $(this).val();
         graph_draw();
@@ -491,6 +511,18 @@ function graph_init_editor()
         yaxismax = $(this).val();
         graph_draw();
     });
+    // right axis
+    $("body").on("change","#yaxis-min2",function(){
+        yaxismin2 = $(this).val();
+        graph_draw();
+    });
+    $("body").on("change","#yaxis-max2",function(){
+        yaxismax2 = $(this).val();
+        graph_draw();
+    });
+    $("body").on("click",".reset-yaxis",function(){
+        $(this).parent().find('input').val('auto');
+    })
 
     $("#csvtimeformat").change(function(){
         csvtimeformat=$(this).val();
@@ -547,16 +579,25 @@ function graph_reloaddraw() {
     graph_reload();
 }
 
+function graph_changeTimezone(tz) {
+    _TIMEZONE = tz;
+    graph_draw();
+}
+
 function graph_reload()
 {
     var intervalms = view.interval * 1000;
     view.start = Math.round(view.start / intervalms) * intervalms;
     view.end = Math.round(view.end / intervalms) * intervalms;
 
-    datetimepicker1.setLocalDate(new Date(view.start));
-    datetimepicker2.setLocalDate(new Date(view.end));
-    datetimepicker1.setEndDate(new Date(view.end));
-    datetimepicker2.setStartDate(new Date(view.start));
+    if(datetimepicker1) {
+        datetimepicker1.setLocalDate(new Date(view.start));
+        datetimepicker1.setEndDate(new Date(view.end));
+    }
+    if(datetimepicker2) {
+        datetimepicker2.setLocalDate(new Date(view.end));
+        datetimepicker2.setStartDate(new Date(view.start));
+    }
 
     $("#request-interval").val(view.interval);
     $("#request-limitinterval").attr("checked",view.limitinterval);
@@ -586,28 +627,43 @@ function graph_reload()
     }
    
     if (ids.length + average_ids.length === 0) {
-        var title = _lang['Select a feed'];
+        graph_resize();
+        graph_draw();
+        var title = _lang['Select a feed'] + '.';
         var message = _lang['Please select a feed from the Feeds List'];
-        $('#error')
-        .show()
-        .html('<div class="alert alert-info"><strong>' + title + '</strong> ' + message + '</div>');
+        var icon = '<svg class="icon show_chart"><use xlink:href="#icon-show_chart"></use></svg>';
+        var markup = ['<div class="alert alert-info"><a href="#" class="open-sidebar"><strong>',icon,title,'</strong>',message,'</a></div>'].join(' ');
+        $('#error').show()
+        .html(markup);
         return false;
+    } else {
+        $('#graph-wrapper').removeClass('empty');
+        $('#cloned_toggle').remove();
     }
     if (ids.length > 0) {
         // get feedlist data
         $.getJSON(path+"feed/data.json", data, addFeedlistData)
-        .error(handleFeedlistDataError)
-        .always(checkFeedlistData);
+        .fail(handleFeedlistDataError)
+        .done(checkFeedlistData);
     }
     if (average_ids.length > 0) {
         // get feedlist average data
         var average_ajax_data = $.extend({}, data, {ids: average_ids.join(',')});
         $.getJSON(path+"feed/average.json", average_ajax_data, addFeedlistData)
-        .error(handleFeedlistDataError)
-        .always(checkFeedlistData);
+        .fail(handleFeedlistDataError)
+        .done(checkFeedlistData);
     }
-}  
-    
+}
+/**
+ * show sidebar if mobile view hiding sidebar
+ */
+$(document).on('click', '.alert a.open-sidebar', function(event) {
+    if (typeof show_sidebar !== 'undefined') {
+        show_sidebar();
+        // @todo: ensure the 3rd level graph menu is open
+    }
+    return false;
+});
 
 function addFeedlistData(response){
     // loop through feedlist and add response data to data property
@@ -620,7 +676,7 @@ function addFeedlistData(response){
                 feed.postprocessed = false;
                 feed.data = item.data;
             }
-            if (typeof item.data.success === 'undefined') {
+            if (!item || !item.data || typeof item.data.success === 'undefined') {
                 valid = true;
             }
         }
@@ -629,7 +685,9 @@ function addFeedlistData(response){
     if (valid) set_feedlist();
 }
 function handleFeedlistDataError(jqXHR, error, message){
-    // @todo: notify the user that the the data api was unreachable;
+    error = error === 'parsererror' ? gettext('Received data not in correct format. Check the logs for more details'): error;
+    var errorstr = '<div class="alert alert-danger" title="'+message+'"><strong>'+gettext('Request error')+':</strong> ' + error + '</div>';
+    $('#error').html(errorstr).show();
 }
 function checkFeedlistData(response){
     // display message to user if response not valid
@@ -650,7 +708,7 @@ function checkFeedlistData(response){
     message = messages.join(', ');
     var errorstr = '';
     if (messages.length > 0) {
-        errorstr = '<div class="alert alert-danger"><strong>Request error</strong> ' + message + '</div>';
+        errorstr = '<div class="alert alert-danger"><strong>'+gettext('Request error')+':</strong> ' + message + '</div>';
         $('#error').html(errorstr).show();
     } else {
         $('#error').hide();
@@ -671,12 +729,12 @@ function set_feedlist() {
             // Apply delta adjustement to feed values
             if (feedlist[z].delta) {
                 for (var i=1; i<feedlist[z].data.length; i++) {
-                    if (feedlist[z].data[i][1]!=null && feedlist[z].data[i-1][1]!=null) {
-                        var delta = feedlist[z].data[i][1] - feedlist[z].data[i-1][1];
-                        feedlist[z].data[i-1][1] = delta;
-                    } else {
-                        feedlist[z].data[i][1] = 0;
+                    // compute feedlist[z].data[i-1]
+                    if (feedlist[z].data[i-1][1] == null || feedlist[z].data[i][1] == null) {
                         feedlist[z].data[i-1][1] = null;
+                    }
+                    else {
+                        feedlist[z].data[i-1][1] = feedlist[z].data[i][1] - feedlist[z].data[i-1][1];
                     }
                 }
                 feedlist[z].data[feedlist[z].data.length-1][1] = null;
@@ -747,13 +805,19 @@ function group_legend_values(_flot, placeholder) {
 }
 function onClickLegendLink(event) {
     event.preventDefault();
-    var link = event.target;
+    var link = event.currentTarget;
     // toggle opacity of the link
     link.classList.toggle('faded');
     // re-draw the chart with the plot lines hidden/shown
     var index = link.dataset.index;
     var current_data = plot_statistics.getData()
-    current_data[index].lines.show = !current_data[index].lines.show;
+    var feed = feedlist.find(function(item) { return item.id == this; }, current_data[index].id);
+    if (feed == undefined) return;
+    switch (feed.plottype) {
+        case 'lines': current_data[index].lines.show = !current_data[index].lines.show; break;
+        case 'bars': current_data[index].bars.show = !current_data[index].bars.show; break;
+        case 'points': current_data[index].points.show = !current_data[index].points.show; break;
+    }
     plot_statistics.setData(current_data);
     // re-draw
     plot_statistics.draw();
@@ -775,6 +839,7 @@ function build_rows(rows) {
 
 function graph_draw()
 {
+    var timezone = _TIMEZONE || "browser";
     var options = {
         lines: { fill: false },
         xaxis: { 
@@ -818,8 +883,11 @@ function graph_draw()
 
     if (showlegend) options.legend.show = true;
     
-    if (yaxismin!='auto' && yaxismin!='') { options.yaxes[0].min = yaxismin; options.yaxes[1].min = yaxismin; }
-    if (yaxismax!='auto' && yaxismax!='') { options.yaxes[0].max = yaxismax; options.yaxes[1].max = yaxismax; }
+    if (yaxismin!='auto' && yaxismin!='') { options.yaxes[0].min = yaxismin; }
+    if (yaxismin2!='auto' && yaxismin2!='') {  options.yaxes[1].min = yaxismin2; }
+
+    if (yaxismax!='auto' && yaxismax!='') { options.yaxes[0].max = yaxismax; }
+    if (yaxismax2!='auto' && yaxismax2!='') { options.yaxes[1].max = yaxismax2; }
     
     var time_in_window = (view.end - view.start) / 1000;
     var hours = Math.floor(time_in_window / 3600);
@@ -846,18 +914,28 @@ function graph_draw()
         }
         // Add series to plot
         var label = "";
+        var unit = getFeedUnit(feedlist[z].id);
         if (showtag) label += feedlist[z].tag+": ";
         label += feedlist[z].name;
-        label += ' ['+getFeedUnit(feedlist[z].id)+']';
+        if (unit.length > 0) {
+            label += ' ['+unit+']';
+        }
         var stacked = (typeof(feedlist[z].stack) !== "undefined" && feedlist[z].stack);
         var plot = {label:label, data:data, yaxis:feedlist[z].yaxis, color: feedlist[z].color, stack: stacked};
         
         if (feedlist[z].plottype=="lines") { plot.lines = { show: true, fill: (feedlist[z].fill ? (stacked ? 1.0 : 0.5) : 0.0), fill: feedlist[z].fill } };
         if (feedlist[z].plottype=="bars") { plot.bars = { align: "center", fill: (feedlist[z].fill ? (stacked ? 1.0 : 0.5) : 0.0), show: true, barWidth: view.interval * 1000 * 0.75 } };
+        if (feedlist[z].plottype == 'points') plot.points = {show: true, radius: 3};
         plot.isRight = feedlist[z].yaxis === 2;
         plot.id = feedlist[z].id;
         plot.index = z;
         plotdata.push(plot);
+    }
+    if (plotdata.length > 1) {
+        // show right yaxis options if required
+        $('#yaxis_right').show()
+    } else {
+        $('#yaxis_right').hide()
     }
     plot_statistics = $.plot($('#placeholder'), plotdata, options);
 
@@ -890,6 +968,8 @@ function graph_draw()
             out += "<option value='lines' "+selected+">Lines</option>";
             if (feedlist[z].plottype == "bars") selected = "selected"; else selected = "";
             out += "<option value='bars' "+selected+">Bars</option>";
+            if (feedlist[z].plottype == "points") selected = "selected"; else selected = "";
+            out += "<option value='points' "+selected+">Points</option>";
             out += "</select></td>";
             out += "<td><input class='linecolor' feedid="+feedlist[z].id+" style='width:50px' type='color' value='#"+default_linecolor+"'></td>";
             out += "<td><input class='fill' type='checkbox' feedid="+feedlist[z].id+"></td>";
@@ -915,8 +995,8 @@ function graph_draw()
             var quality = Math.round(100 * (1-(feedlist[z].stats.npointsnull/feedlist[z].stats.npoints)));
             out += "<td>"+quality+"% ("+(feedlist[z].stats.npoints-feedlist[z].stats.npointsnull)+"/"+feedlist[z].stats.npoints+")</td>";
             var dp = feedlist[z].dp;
-            out += "<td>"+feedlist[z].stats.minval.toFixed(dp)+"</td>";
-            out += "<td>"+feedlist[z].stats.maxval.toFixed(dp)+"</td>";
+            if(!isNaN(Number(feedlist[z].stats.minval))) out += "<td>"+feedlist[z].stats.minval.toFixed(dp)+"</td>";
+            if(!isNaN(Number(feedlist[z].stats.maxval))) out += "<td>"+feedlist[z].stats.maxval.toFixed(dp)+"</td>";
             out += "<td>"+feedlist[z].stats.diff.toFixed(dp)+"</td>";
             out += "<td>"+feedlist[z].stats.mean.toFixed(dp)+"</td>";
             out += "<td>"+feedlist[z].stats.stdev.toFixed(dp)+"</td>";
@@ -1011,6 +1091,7 @@ function printcsv()
     var line = [];
     var lastvalue = [];
     var start_time = feedlist[0].data[0][0];
+    var end_time = feedlist[feedlist.length-1].data[feedlist[feedlist.length-1].data.length-1][0];
     var showName=false;
     var showTag=false;
 
@@ -1088,6 +1169,26 @@ function printcsv()
         }
     }
     $("#csv").val(csvout);
+
+    // populate download form
+    for (f in feedlist) {
+        var meta = feedlist[f];
+
+        $("[data-download]").each(function(i,elem){
+            $form = $(this);
+            var path = $form.find('[data-path]').val();
+            var action = $form.find('[data-action]').val();
+            var format = $form.find('[data-format]').val();
+            $form.attr('action', path + action + '.' + format);
+            $form.find('[name="ids"]').val(meta.id);
+            $form.find('[name="start"]').val(start_time);
+            $form.find('[name="end"]').val(end_time);
+            $form.find('[name="headers"]').val('names');
+            $form.find('[name="timeformat"]').val(csvtimeformat);
+            $form.find('[name="interval"]').val(view.interval);
+            $form.find('[name="nullvalues"]').val(csvnullvalues);
+        });
+    }
 }
 
 //----------------------------------------------------------------------------------------
@@ -1194,16 +1295,21 @@ function histogram(feedid,type,resolution)
 //----------------------------------------------------------------------------------------
 $("#graph-select").change(function() {
     var name = $(this).val();
+    var id = $(this).find(':selected').data('id');
+    $('#graph-id').text(id);
     load_saved_graph(name);
 });
 
 function load_saved_graph(name) {
     $("#graph-name").val(name);
     $("#graph-delete").show();
+    
     var index = graph_index_from_name(name);
     
-    $("#graph-id").html(savedgraphs[index].id);
+    if(typeof savedgraphs[index] === 'undefined') return;
     
+    $("#graph-id").text(savedgraphs[index].id)
+
     // view settings
     view.start = savedgraphs[index].start;
     view.end = savedgraphs[index].end;
@@ -1212,7 +1318,9 @@ function load_saved_graph(name) {
     view.fixinterval = savedgraphs[index].fixinterval;
     floatingtime = savedgraphs[index].floatingtime,
     yaxismin = savedgraphs[index].yaxismin;
+    yaxismin2 = savedgraphs[index].yaxismin2 || 'auto';
     yaxismax = savedgraphs[index].yaxismax;
+    yaxismax2 = savedgraphs[index].yaxismax2 || 'auto';
 
     // CSV display settings
     csvtimeformat = (typeof(savedgraphs[index].csvtimeformat)==="undefined" ? "datestr" : savedgraphs[index].csvtimeformat);
@@ -1237,6 +1345,8 @@ function load_saved_graph(name) {
 
     $("#yaxis-min").val(yaxismin);
     $("#yaxis-max").val(yaxismax);
+    $("#yaxis-min2").val(yaxismin2);
+    $("#yaxis-max2").val(yaxismax2);
     $("#request-fixinterval")[0].checked = view.fixinterval;
     $("#request-limitinterval")[0].checked = view.limitinterval;
     $("#showmissing")[0].checked = showmissing;
@@ -1299,6 +1409,8 @@ $("#graph-save").click(function() {
         floatingtime: floatingtime,
         yaxismin: yaxismin,
         yaxismax: yaxismax,
+        yaxismin2: yaxismin2,
+        yaxismax2: yaxismax2,
         showmissing: showmissing,
         showtag: showtag,
         showlegend: showlegend,
@@ -1346,10 +1458,11 @@ function graph_load_savedgraphs(fn=false)
         success: function(result) {
             savedgraphs = result.user;
             
-            var out = "<option>" + _lang['Select graph'] + ":</option>";
+            var out = "<option value=''>" + _lang['Select graph'] + ":</option>";
             for (var z in savedgraphs) {
-               var name = savedgraphs[z].name;
-               out += "<option>"+name+"</option>";
+                var id = savedgraphs[z].id;
+                var name = savedgraphs[z].name;
+               out += '<option data-id="' + id +'" value="' + name +'">'+ '[#'+id+'] ' + name+'</option>';
             }
             $("#graph-select").html(out);
             if (fn) fn();
@@ -1416,50 +1529,28 @@ function graph_delete(id) {
     graph_load_savedgraphs();
 }
 
-// ----------------------------------------------------------------------------------------
-// Sidebar
-// ----------------------------------------------------------------------------------------
-$("#sidebar-open").click(function(){
-    $("#sidebar-wrapper").css("left","250px");
-    $("#sidebar-close").show();
-});
-
-$("#sidebar-close").click(function(){
-    $("#sidebar-wrapper").css("left","0");
-    $("#sidebar-close").hide();
-});
-
-function sidebar_resize() {
-    var width = $(window).width();
-    var height = $(window).height();
-    $("#sidebar-wrapper").height(height-41);
-    
-    if (width<1024) {
-        $("#sidebar-wrapper").css("left","0");
-        $("#wrapper").css("padding-left","0");
-        $("#sidebar-open").show();
-    } else {
-        $("#sidebar-wrapper").css("left","250px");
-        $("#wrapper").css("padding-left","250px");
-        $("#sidebar-open").hide();
-        $("#sidebar-close").hide();
-    }
-}
 
 // ----------------------------------------------------------------------------------------
 function load_feed_selector() {
     for (var z in feeds) {
         var feedid = feeds[z].id;
-        $(".feed-select-left[feedid="+feedid+"]")[0].checked = false;
-        $(".feed-select-right[feedid="+feedid+"]")[0].checked = false;
+        var left = $(".feed-select-left[data-feedid="+feedid+"]");
+        if (left.length>0) $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = false;
+
+        var right = $(".feed-select-left[data-feedid="+feedid+"]");
+        if (right.length>0) $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = false;
     }
     
     for (var z=0; z<feedlist.length; z++) {
         var feedid = feedlist[z].id;
         var tag = feedlist[z].tag;
         if (tag=="") tag = "undefined";
-        if (feedlist[z].yaxis==1) { $(".feed-select-left[feedid="+feedid+"]")[0].checked = true; $(".tagbody[tag='"+tag+"']").show(); }
-        if (feedlist[z].yaxis==2) { $(".feed-select-right[feedid="+feedid+"]")[0].checked = true; $(".tagbody[tag='"+tag+"']").show(); }
+        if (feedlist[z].yaxis==1 && $(".feed-select-left[data-feedid="+feedid+"]").length > 0) { 
+            $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show(); 
+        }
+        if (feedlist[z].yaxis==2 && $(".feed-select-right[data-feedid="+feedid+"]").length > 0) {
+            $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show();
+        }
     }
 }
 
