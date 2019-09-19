@@ -164,6 +164,12 @@
 input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
     margin:0 5px;
 }
+
+#navigation svg.icon {
+    width: .9em;
+    height: .9em;
+}
+
 #tooltip {
     z-index: 1001;
 }

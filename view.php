@@ -28,26 +28,27 @@
     if (isset($_GET['apikey'])) $apikey = $_GET['apikey'];
 ?>
 
-<!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/excanvas.min.js"></script><![endif]-->
+<!--[if IE]><script src="<?php echo $path;?>Lib/flot/excanvas.min.js"></script><![endif]-->
 
 <style>
     [v-cloak] {
         visibility: hidden
     }
 </style>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.time.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.selection.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.touch.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.togglelegend.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/jquery.flot.resize.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Modules/graph/vis.helper.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/misc/clipboard.js?v=<?php echo $v; ?>"></script>
 <link href="<?php echo $path; ?>Lib/bootstrap-datetimepicker-0.0.11/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-<script language="javascript" type="text/javascript" src="<?php echo $path; ?>Lib/bootstrap-datetimepicker-0.0.11/js/bootstrap-datetimepicker.min.js"></script>
 <link href="<?php echo $path; ?>Modules/graph/graph.css?v=<?php echo $v; ?>" rel="stylesheet">
-<script src="<?php echo $path; ?>Modules/config/vue.js"></script>
+
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.min.js"></script>
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.time.min.js"></script>
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.selection.min.js"></script>
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.touch.min.js"></script>
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.togglelegend.min.js"></script>
+<script src="<?php echo $path;?>Lib/flot/jquery.flot.resize.min.js"></script>
+<script src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
+<script src="<?php echo $path;?>Modules/graph/vis.helper.js?v=<?php echo $v; ?>"></script>
+<script src="<?php echo $path;?>Lib/misc/clipboard.js?v=<?php echo $v; ?>"></script>
+<script src="<?php echo $path; ?>Lib/bootstrap-datetimepicker-0.0.11/js/bootstrap-datetimepicker.min.js"></script>
+<script src="<?php echo $path; ?>Lib/vue.min.js"></script>
 
 <h3><?php echo _('Data viewer'); ?></h3>
 <div id="error" style="display:none"></div>
@@ -57,10 +58,10 @@
     <button class='btn graph_time' type='button' data-time='7' title="<?php echo _('Week') ?>"><b><?php echo _('W') ?></b></button>
     <button class='btn graph_time' type='button' data-time='30' title="<?php echo _('Month') ?>"><b><?php echo _('M') ?></b></button>
     <button class='btn graph_time' type='button' data-time='365' title="<?php echo _('Year') ?>"><b><?php echo _('Y') ?></b></button>
-    <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><span class="icon-plus"></span></button>
-    <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><span class="icon-minus"></span></button>
-    <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><span class="icon-chevron-left"></span></button>
-    <button id='graph_right' class='btn' title="<?php echo _('Later') ?>"><span class="icon-chevron-right"></span></button>
+    <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><svg class="icon"><use xlink:href="#icon-plus"></use></svg></button>
+    <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><svg class="icon"><use xlink:href="#icon-minus"></use></svg></button>
+    <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><svg class="icon"><use xlink:href="#icon-chevron-left"></use></svg></button>
+    <button id='graph_right' class='btn' title="<?php echo _('Later') ?>"><svg class="icon"><use xlink:href="#icon-chevron-right"></use></svg></button>
     
     <div class="input-prepend input-append" style="float:right; margin-right:22px">
         <span class="add-on"><?php echo _('Show') ?></span>
@@ -310,8 +311,8 @@
         return datestr;
     };
 </script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Modules/graph/graph.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/moment.min.js"></script>
+<script src="<?php echo $path;?>Modules/graph/graph.js?v=<?php echo $v; ?>"></script>
+<script src="<?php echo $path;?>Lib/moment.min.js"></script>
 <script>
     var user = {
         lang : "<?php if (isset($_SESSION['lang'])) echo $_SESSION['lang']; ?>"
