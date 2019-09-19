@@ -58,10 +58,10 @@
     <button class='btn graph_time' type='button' data-time='7' title="<?php echo _('Week') ?>"><b><?php echo _('W') ?></b></button>
     <button class='btn graph_time' type='button' data-time='30' title="<?php echo _('Month') ?>"><b><?php echo _('M') ?></b></button>
     <button class='btn graph_time' type='button' data-time='365' title="<?php echo _('Year') ?>"><b><?php echo _('Y') ?></b></button>
-    <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><span class="icon-plus"></span></button>
-    <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><span class="icon-minus"></span></button>
-    <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><span class="icon-chevron-left"></span></button>
-    <button id='graph_right' class='btn' title="<?php echo _('Later') ?>"><span class="icon-chevron-right"></span></button>
+    <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>"><svg class="icon"><use xlink:href="#icon-plus"></use></svg></button>
+    <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>"><svg class="icon"><use xlink:href="#icon-minus"></use></svg></button>
+    <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><svg class="icon"><use xlink:href="#icon-chevron-left"></use></svg></button>
+    <button id='graph_right' class='btn' title="<?php echo _('Later') ?>"><svg class="icon"><use xlink:href="#icon-chevron-right"></use></svg></button>
     
     <div class="input-prepend input-append" style="float:right; margin-right:22px">
         <span class="add-on"><?php echo _('Show') ?></span>
