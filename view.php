@@ -11,7 +11,7 @@
 
     global $path, $embed;
     $userid = 0;
-    $v = 4;
+    $v = 5;
     
     if (isset($_GET['userid'])) $userid = (int) $_GET['userid'];
     
@@ -48,7 +48,7 @@
 <script src="<?php echo $path;?>Modules/graph/vis.helper.js?v=<?php echo $v; ?>"></script>
 <script src="<?php echo $path;?>Lib/misc/clipboard.js?v=<?php echo $v; ?>"></script>
 <script src="<?php echo $path; ?>Lib/bootstrap-datetimepicker-0.0.11/js/bootstrap-datetimepicker.min.js"></script>
-<script src="<?php echo $path; ?>Lib/vue.min.js"></script>
+<script src="<?php echo $path; ?>Lib/vue.min.js?v=<?php echo $v; ?>"></script>
 
 <h3><?php echo _('Data viewer'); ?></h3>
 <div id="error" style="display:none"></div>
@@ -131,8 +131,8 @@
     </div>
     <div class="input-prepend input-append" style="padding-right:5px">
         <span class="add-on"><?php echo _('Timezone') ?></span>
-        <span class="timezone-options">
-            <select id="timezone">
+        <span class="timezone-options" >
+            <select id="timezone" style="width:280px" >
                 <optgroup label="<?php echo _('System') ?>">
                     <option id="browser_timezone"></option>
                     <option id="user_timezone"></option>
@@ -143,7 +143,7 @@
         </span>
     </div>
     <div id="yaxis_left" class="input-append input-prepend">
-        <span class="add-on" style="width:80px"><?php echo _('Y-axis').'('._('Left').')' ?>:</span>
+        <span class="add-on" style="width:110px"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
         <span class="add-on" style="width:30px"><?php echo _('min') ?></span>
         <input id="yaxis-min" type="text" style="width:50px" value="auto">
         <span class="add-on" style="width:30px"><?php echo _('max') ?></span>
@@ -151,7 +151,7 @@
         <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
     </div>
     <div id="yaxis_right" class="input-append input-prepend">
-        <span class="add-on" style="width:80px"><?php echo _('Y-axis').'('._('Right').')' ?>:</span>
+        <span class="add-on" style="width:110px"><?php echo _('Y-axis').' ('._('Right').')' ?>:</span>
         <span class="add-on" style="width:30px"><?php echo _('min') ?></span>
         <input id="yaxis-min2" type="text" style="width:50px" value="auto">
         <span class="add-on" style="width:30px"><?php echo _('max') ?></span>
@@ -270,7 +270,7 @@
     </div>
 
     <div class="input-append"><!-- just to match the styling of the other items -->
-        <button onclick="copyToClipboardCustomMsg(document.getElementById('csv'), 'copy-csv-feedback','Copied')" class="csvoptions btn hidden" id="copy-csv" type="button"><?php echo _('Copy') ?> <i class="icon-share-alt"></i></button>
+        <button onclick="copyToClipboardCustomMsg(document.getElementById('csv'), 'copy-csv-feedback','<?php echo _('Copied') ?>')" class="csvoptions btn hidden" id="copy-csv" type="button"><?php echo _('Copy') ?> <i class="icon-share-alt"></i></button>
     </div>
 
     <span id="copy-csv-feedback" class="csvoptions"></span>
@@ -285,32 +285,6 @@
     if (apikey!="") apikeystr = "&apikey="+apikey;
 </script>
 
-<script>
-/**
-     * @todo replace this with moment.js translated date/time strings
-     * see feed and input views for example of translated dates
-     * eg. moment().fromUnix(timestamp).format('ll') // format unix timestamp as per user's locale
-     * @see Lib/misc/moment.min.js
-     **/
-    function printdate(timestamp)
-    {
-        var date = new Date();
-        var thisyear = date.getFullYear()-2000;
-
-        var date = new Date(timestamp);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var year = date.getFullYear()-2000;
-        var month = months[date.getMonth()];
-        var day = date.getDate();
-
-        var minutes = date.getMinutes();
-        if (minutes<10) minutes = "0"+minutes;
-
-        var datestr = date.getHours()+":"+minutes+" "+day+" "+month;
-        if (thisyear!=year) datestr +=" "+year;
-        return datestr;
-    };
-</script>
 <script src="<?php echo $path;?>Modules/graph/graph.js?v=<?php echo $v; ?>"></script>
 <script src="<?php echo $path;?>Lib/moment.min.js"></script>
 <script>
@@ -437,6 +411,7 @@
         "Received data not in correct format. Check the logs for more details" => _("Received data not in correct format. Check the logs for more details"),
         "Request error" => _("Request error"),
         "User" => _("User"),
+        "Browser" => _("Browser"),
         "Authentication Required" => _("Authentication Required")
     );
     printf("var translations = %s;\n",json_encode($translations));
@@ -479,7 +454,7 @@
             
             let browser_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             let label = timezones.hasOwnProperty(browser_tz) ? timezones[browser_tz].label : browser_tz;
-            $browser_timezone.val(browser_tz).text('Browser: ' + browser_tz + ' ('+ label + ')');
+            $browser_timezone.val(browser_tz).text(_('Browser') +': ' + browser_tz + ' ('+ label + ')');
         })
 
         $timezone.on('change', function(event) {
