@@ -1607,7 +1607,7 @@ function load_saved_graph(graph) {
     $("#showlegend")[0].checked = showlegend;
     // draw graph
     graph_reloaddraw();
-
+    load_feed_selector();
     // Placed after graph load as values only available after the graph is redrawn
     $("#csvtimeformat").val(csvtimeformat);
     $("#csvnullvalues").val(csvnullvalues);
@@ -1721,7 +1721,21 @@ function compare_name( a, b ) {
     return 0
 }
 
-
+function load_feed_selector() {
+    for (var z in feeds) {
+        var feedid = feeds[z].id;
+        $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = false;
+        $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = false;
+    }
+    
+    for (var z=0; z<feedlist.length; z++) {
+        var feedid = feedlist[z].id;
+        var tag = feedlist[z].tag;
+        if (tag=="") tag = "undefined";
+        if (feedlist[z].yaxis==1) { $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show(); }
+        if (feedlist[z].yaxis==2) { $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show(); }
+    }
+}
 /**
  * @todo replace this with moment.js translated date/time strings
  * see feed and input views for example of translated dates

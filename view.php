@@ -393,6 +393,7 @@
     }
 
     graph_init_editor();
+    load_feed_selector();
     
     graph_resize();
     
