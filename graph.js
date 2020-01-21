@@ -541,6 +541,10 @@ function graph_init_editor()
         csvheaders=$(this).val();
         printcsv();
     });
+    
+    $("#download-csv").click(function(){
+        download_data("graph.csv", $("#csv").val())    
+    });
 
     $('body').on("click",".legendColorBox",function(d){
           var country = $(this).html().toLowerCase();
@@ -1169,26 +1173,6 @@ function printcsv()
         }
     }
     $("#csv").val(csvout);
-
-    // populate download form
-    for (f in feedlist) {
-        var meta = feedlist[f];
-
-        $("[data-download]").each(function(i,elem){
-            $form = $(this);
-            var path = $form.find('[data-path]').val();
-            var action = $form.find('[data-action]').val();
-            var format = $form.find('[data-format]').val();
-            $form.attr('action', path + action + '.' + format);
-            $form.find('[name="ids"]').val(meta.id);
-            $form.find('[name="start"]').val(start_time);
-            $form.find('[name="end"]').val(end_time);
-            $form.find('[name="headers"]').val('names');
-            $form.find('[name="timeformat"]').val(csvtimeformat);
-            $form.find('[name="interval"]').val(view.interval);
-            $form.find('[name="nullvalues"]').val(csvnullvalues);
-        });
-    }
 }
 
 //----------------------------------------------------------------------------------------
@@ -1746,3 +1730,19 @@ function printdate(timestamp)
     if (thisyear!=year) datestr +=" "+year;
     return datestr;
 };
+
+// See: https://stackoverflow.com/questions/3665115/how-to-create-a-file-in-memory-for-user-to-download-but-not-through-server
+function download_data(filename, data) {
+    var blob = new Blob([data], {type: 'text/csv'});
+    if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else{
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;        
+        document.body.appendChild(elem);
+        elem.click();        
+        document.body.removeChild(elem);
+    }
+}
