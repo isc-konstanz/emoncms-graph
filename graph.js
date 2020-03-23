@@ -924,7 +924,9 @@ function graph_draw()
         var unit = getFeedUnit(feedlist[z].id);
         if (showtag) label += feedlist[z].tag+": ";
         label += feedlist[z].name;
-        // label += ' '+getFeedUnit(feedlist[z].id);
+        if (unit.length > 0) {
+            label += ' ['+unit+']';
+        }
         var stacked = (typeof(feedlist[z].stack) !== "undefined" && feedlist[z].stack);
         var plot = {label:label, data:data, yaxis:feedlist[z].yaxis, color: feedlist[z].color, stack: stacked};
 
