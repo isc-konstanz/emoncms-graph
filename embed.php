@@ -85,6 +85,24 @@
     embed = true;
     
     var graphid = "<?php echo $graphid; ?>";
+
+    var _lang = <?php
+        $lang['Select a feed'] = _('Select a feed');
+        $lang['Please select a feed from the Feeds List'] = _('Please select a feed from the Feeds List');
+        $lang['Select graph'] = _('Select graph');
+        $lang['Show CSV Output'] = _('Show CSV Output');
+        $lang['Hide CSV Output'] = _('Hide CSV Output');
+        $lang['Lines'] = _('Lines');
+        $lang['Bars'] = _('Bars');
+        $lang['Points'] = _('Points');
+        $lang['Histogram'] = _('Histogram');
+        $lang['Move up'] = _('Move up');
+        $lang['Move down'] = _('Move down');
+        $lang['Window'] = _('Window');
+        $lang['Length'] = _('Length');
+        echo json_encode($lang) . ';';
+        echo "\n";
+    ?>
     
     $.ajax({
         url: path+"/graph/get?id="+graphid,
