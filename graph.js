@@ -1279,7 +1279,7 @@ function histogram(feedid,type,resolution)
 
 
 var saveGraphsApp = new Vue({
-    el: '#my_graphs',
+    el: '#graph-list',
     data: {
         selected: -1,
         collapsed: false,

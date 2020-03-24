@@ -40,17 +40,15 @@
 /* ------------------------------------------ */
 
 /* sidebar #mygraphs */
-#graph-list{
-    width: 14rem;
+#graph-list {
     overflow: hidden;
-    position: relative;
-    /* margin-bottom: 3rem; */
+    padding-right: 10px;
 }
-#graph-list input{
-    width:12rem;
+#graph-list select {
+    width: 100%;
 }
-#graph-list select{
-    width:13rem;
+#graph-list input {
+    width: calc(100% - var(--s3));
 }
 /* end of sidebar #mygraphs */
 
