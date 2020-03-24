@@ -11,7 +11,7 @@
 
     global $path, $embed;
     $userid = 0;
-    $v = 5;
+    $v = 6;
     
     if (isset($_GET['userid'])) $userid = (int) $_GET['userid'];
     
@@ -230,45 +230,9 @@
         </select>
     </div>
 
-    <div id="download-buttons" class="csvoptions btn-group input-prepend">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-            <?php echo _('Download') ?>
-            <span class="caret" style="border-top-color:black!important"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <form id="download_csv" data-download>
-                    <input type="hidden" data-format value="csv">
-                    <input type="hidden" data-path value="<?php echo $path ?>">
-                    <input type="hidden" data-action value="graph/download">
-                    <input type="hidden" name="ids">
-                    <input type="hidden" name="start">
-                    <input type="hidden" name="end">
-                    <input type="hidden" name="headers">
-                    <input type="hidden" name="timeformat">
-                    <input type="hidden" name="interval">
-                    <input type="hidden" name="nullvalues">
-                    <button class="btn btn-link csvoptions">CSV</button>
-                </form>
-            </li>
-            <li>
-                <form id="download_json" data-download>
-                    <input type="hidden" data-format value="json">
-                    <input type="hidden" data-path value="<?php echo $path ?>">
-                    <input type="hidden" data-action value="graph/download">
-                    <input type="hidden" name="ids">
-                    <input type="hidden" name="start">
-                    <input type="hidden" name="end">
-                    <input type="hidden" name="headers">
-                    <input type="hidden" name="timeformat">
-                    <input type="hidden" name="interval">
-                    <input type="hidden" name="nullvalues">
-                    <button class="btn btn-link csvoptions">JSON</button>
-                </form>
-            </li>
-        </ul>
+    <div class="input-prepend">
+    <button id="download-csv" class="csvoptions btn "><?php echo _('Download') ?></button>
     </div>
-
     <div class="input-append"><!-- just to match the styling of the other items -->
         <button onclick="copyToClipboardCustomMsg(document.getElementById('csv'), 'copy-csv-feedback','<?php echo _('Copied') ?>')" class="csvoptions btn hidden" id="copy-csv" type="button"><?php echo _('Copy') ?> <i class="icon-share-alt"></i></button>
     </div>
@@ -310,6 +274,16 @@
         $lang['Select a feed'] = _('Select a feed');
         $lang['Please select a feed from the Feeds List'] = _('Please select a feed from the Feeds List');
         $lang['Select graph'] = _('Select graph');
+        $lang['Show CSV Output'] = _('Show CSV Output');
+        $lang['Hide CSV Output'] = _('Hide CSV Output');
+        $lang['Lines'] = _('Lines');
+        $lang['Bars'] = _('Bars');
+        $lang['Points'] = _('Points');
+        $lang['Histogram'] = _('Histogram');
+        $lang['Move up'] = _('Move up');
+        $lang['Move down'] = _('Move down');
+        $lang['Window'] = _('Window');
+        $lang['Length'] = _('Length');
         echo json_encode($lang) . ';';
         echo "\n";
     ?>
@@ -383,6 +357,7 @@
     }
 
     graph_init_editor();
+    load_feed_selector();
     
     graph_resize();
     
