@@ -700,7 +700,11 @@ function checkFeedlistData(response){
     // display message to user if response not valid
     var message = '';
     var messages = [];
-
+    var badfeeds = [];
+    if (typeof(response) === 'object' && response.message) {
+        if (response.success === false && response.feeds ) badfeeds = badfeeds.concat(response.feeds);
+        messages.push(response.message);
+    } else
     for (i in response) {
         var item = response[i];
         if (typeof item.data !== 'undefined') {
@@ -715,8 +719,16 @@ function checkFeedlistData(response){
     message = messages.join(', ');
     var errorstr = '';
     if (messages.length > 0) {
-        errorstr = '<div class="alert alert-danger"><strong>'+_('Request error')+':</strong> ' + message + '</div>';
+        errorstr = '<div class="alert alert-danger"><strong>'+_('Request error')+':</strong> ' + message;
+        if( badfeeds.length )
+            errorstr += '<button id="remove_missing" type="button" class="btn">'+_('Remove missing') + '</button>';
+        errorstr += '</div>'
         $('#error').html(errorstr).show();
+        if( badfeeds.length )
+            $('#remove_missing').click(() => {
+                feedlist = feedlist.filter((feed)=>!badfeeds.find((id)=>feed.id === id));
+                graph_reload();
+            });
     } else {
         $('#error').hide();
     }
@@ -1716,8 +1728,14 @@ function load_feed_selector() {
         var feedid = feedlist[z].id;
         var tag = feedlist[z].tag;
         if (tag=="") tag = "undefined";
-        if (feedlist[z].yaxis==1) { $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show(); }
-        if (feedlist[z].yaxis==2) { $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show(); }
+        if (feedlist[z].yaxis==1) {
+            if ($(".feed-select-left[data-feedid="+feedid+"]")[0])
+                $(".feed-select-left[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show();
+        }
+        if (feedlist[z].yaxis==2) {
+            if ($(".feed-select-left[data-feedid="+feedid+"]")[0])
+                $(".feed-select-right[data-feedid="+feedid+"]")[0].checked = true; $(".tagbody[data-tag='"+tag+"']").show();
+        }
     }
 }
 /**
