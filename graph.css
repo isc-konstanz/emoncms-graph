@@ -211,6 +211,11 @@ input.feed-tag-checkbox-left, input.feed-tag-checkbox-right{
     outline: none;
 }
 
+#error #remove_missing.btn {
+    margin-top: -5px;
+    float: right;
+}
+
 table#feeds.table thead th{
     border-top: 4px solid #333;
     font-weight: normal !important;
