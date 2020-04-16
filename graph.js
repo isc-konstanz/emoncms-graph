@@ -42,9 +42,9 @@ $("#graph_zoomout").click(function () {floatingtime=0; view.zoomout(); graph_rel
 $("#graph_zoomin").click(function () {floatingtime=0; view.zoomin(); graph_reloaddraw();});
 $('#graph_right').click(function () {floatingtime=0; view.panright(); graph_reloaddraw();});
 $('#graph_left').click(function () {floatingtime=0; view.panleft(); graph_reloaddraw();});
-$('.graph_time').click(function () {
+$('.graph_time').change(function () {
     floatingtime=1;
-    view.timewindow($(this).data("time"));
+    view.timewindow($(this).val()/24.0);
     graph_reloaddraw();
 });
 
@@ -106,6 +106,7 @@ function graph_resize() {
 
     var width = placeholder_bound.width();
     var height = width * 0.5;
+    if (height<300) height = 300;
     if (embed) height = $(window).height();
 
     placeholder.width(width);

@@ -54,16 +54,30 @@
 <div id="error" style="display:none"></div>
 
 <div id="navigation" style="padding-bottom:5px;">
+    <select class='btn graph_time' style="width:100px">
+        <option value='1'><?php echo _('1 hour') ?></option>
+        <option value='6'><?php echo _('6 hours') ?></option>
+        <option value='12'><?php echo _('12 hours') ?></option>
+        <option value='24'><?php echo _('24 hours') ?></option>
+        <option value='168' selected><?php echo _('1 Week') ?></option>
+        <option value='336'><?php echo _('2 Weeks') ?></option>        
+        <option value='720'><?php echo _('Month') ?></option>
+        <option value='8760'><?php echo _('Year') ?></option>
+    </select>
+
+    <!--
     <button class='btn graph_time' type='button' data-time='1' title="<?php echo _('Day') ?>"><?php echo _('D') ?></button>
     <button class='btn graph_time' type='button' data-time='7' title="<?php echo _('Week') ?>"><?php echo _('W') ?></button>
     <button class='btn graph_time' type='button' data-time='30' title="<?php echo _('Month') ?>"><?php echo _('M') ?></button>
     <button class='btn graph_time' type='button' data-time='365' title="<?php echo _('Year') ?>"><?php echo _('Y') ?></button>
+    -->
+    
     <button id='graph_zoomin' class='btn' title="<?php echo _('Zoom In') ?>">+</button>
     <button id='graph_zoomout' class='btn' title="<?php echo _('Zoom Out') ?>">-</button>
     <button id='graph_left' class='btn' title="<?php echo _('Earlier') ?>"><</button>
     <button id='graph_right' class='btn' title="<?php echo _('Later') ?>">></button>
     
-    <div class="input-prepend input-append" style="float:right; margin-right:22px">
+    <div id="showcontrols" class="input-prepend input-append">
     <span class="add-on"><?php echo _('Show') ?></span>
     <span class="add-on"><?php echo _('missing data') ?>: <input type="checkbox" id="showmissing" style="margin-top:1px" /></span>
     <span class="add-on"><?php echo _('legend') ?>: <input type="checkbox" id="showlegend" style="margin-top:1px" /></span>
@@ -92,7 +106,7 @@
     <div id="placeholder"></div>
 </div>
 
-<div id="info" style="padding-top:20px; display:none">
+<div id="info">
     
     <div class="input-prepend input-append" style="padding-right:5px">
         <span class="add-on" style="width:50px"><?php echo _('Start') ?></span>
@@ -132,7 +146,7 @@
     <div class="input-prepend input-append" style="padding-right:5px">
         <span class="add-on"><?php echo _('Timezone') ?></span>
         <span class="timezone-options" >
-            <select id="timezone" style="width:280px" >
+            <select id="timezone" >
                 <optgroup label="<?php echo _('System') ?>">
                     <option id="browser_timezone"></option>
                     <option id="user_timezone"></option>
@@ -143,19 +157,19 @@
         </span>
     </div>
     <div id="yaxis_left" class="input-append input-prepend">
-        <span class="add-on" style="width:110px"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
-        <span class="add-on" style="width:30px"><?php echo _('min') ?></span>
-        <input id="yaxis-min" type="text" style="width:50px" value="auto">
-        <span class="add-on" style="width:30px"><?php echo _('max') ?></span>
-        <input id="yaxis-max" type="text" style="width:50px;" value="auto">
+        <span id="yaxis-left" class="add-on"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
+        <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
+        <input class="yaxis-minmax" id="yaxis-min" type="text" value="auto">
+        <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
+        <input class="yaxis-minmax" id="yaxis-max" type="text" value="auto">
         <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
     </div>
     <div id="yaxis_right" class="input-append input-prepend">
-        <span class="add-on" style="width:110px"><?php echo _('Y-axis').' ('._('Right').')' ?>:</span>
-        <span class="add-on" style="width:30px"><?php echo _('min') ?></span>
-        <input id="yaxis-min2" type="text" style="width:50px" value="auto">
-        <span class="add-on" style="width:30px"><?php echo _('max') ?></span>
-        <input id="yaxis-max2" type="text" style="width:50px;" value="auto">
+        <span id="yaxis-right" class="add-on"><?php echo _('Y-axis').' ('._('Right').')' ?>:</span>
+        <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
+        <input class="yaxis-minmax" id="yaxis-min2" type="text" value="auto">
+        <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
+        <input class="yaxis-minmax" id="yaxis-max2" type="text" value="auto">
         <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
     </div>
 
@@ -173,7 +187,7 @@
             </a>
         </div>
 
-        <div id="tables" class="collapse">
+        <div id="tables">
             <table id="feed-options-table" class="table">
                 <tr>
                     <th></th>
