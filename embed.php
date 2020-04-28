@@ -55,7 +55,7 @@
 </div>
 
 <div id="navigation" style="padding-bottom:2px;" >
-    <div class="input-prepend input-append" style="margin-bottom:0 !important">
+    <div class="input-prepend input-append" style="margin-bottom:0 !important; margin-left:2px;">
         <button class='btn graph_time_refresh' title="<?php echo _('Refresh') ?>"><i class="icon-repeat"></i></button>
         <select class='btn graph_time' style="width:90px; padding-left:5px">
             <option value='1'><?php echo _('1 hour') ?></option>
