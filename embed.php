@@ -18,7 +18,7 @@
     $apikey = "";
     if (isset($_GET['apikey'])) $apikey = $_GET['apikey'];
     
-    $js_css_version = 1;
+    $js_css_version = 2;
 ?>
 
 <!--[if IE]><script language="javascript" type="text/javascript" src="<?php echo $path;?>Lib/flot/excanvas.min.js"></script><![endif]-->
