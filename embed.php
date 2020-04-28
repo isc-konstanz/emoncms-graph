@@ -55,10 +55,24 @@
 </div>
 
 <div id="navigation" style="padding-bottom:5px;" >
+    <div class="input-prepend input-append" style="margin-bottom:0">
+        <button class='btn graph_time_refresh' title="<?php echo _('Refresh') ?>"><i class="icon-repeat"></i></button>
+        <select class='btn graph_time' style="width:90px; padding-left:5px">
+            <option value='1'><?php echo _('1 hour') ?></option>
+            <option value='6'><?php echo _('6 hours') ?></option>
+            <option value='12'><?php echo _('12 hours') ?></option>
+            <option value='24'><?php echo _('24 hours') ?></option>
+            <option value='168' selected><?php echo _('1 Week') ?></option>
+            <option value='336'><?php echo _('2 Weeks') ?></option>        
+            <option value='720'><?php echo _('Month') ?></option>
+            <option value='8760'><?php echo _('Year') ?></option>
+        </select>
+    </div>
+    <!--
     <button class='btn graph_time' type='button' data-time='1'>D</button>
     <button class='btn graph_time' type='button' data-time='7'>W</button>
     <button class='btn graph_time' type='button' data-time='30'>M</button>
-    <button class='btn graph_time' type='button' data-time='365'>Y</button>
+    <button class='btn graph_time' type='button' data-time='365'>Y</button>-->
 <button class='btn navigation-timewindow' type='button'><i class='icon-resize-horizontal'></i></button>
     <button id='graph_zoomin' class='btn'>+</button>
     <button id='graph_zoomout' class='btn'>-</button>

@@ -46,6 +46,13 @@ $('.graph_time').change(function () {
     floatingtime=1;
     view.timewindow($(this).val()/24.0);
     graph_reloaddraw();
+    console.log("graph_time change");
+});
+$('.graph_time_refresh').click(function () {
+    floatingtime=1;
+    view.timewindow($('.graph_time').val()/24.0);
+    graph_reloaddraw();
+    console.log("graph_time click");
 });
 
 $('#placeholder').bind("plotselected", function (event, ranges)
