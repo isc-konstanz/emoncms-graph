@@ -146,19 +146,6 @@
             <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox" style="margin-top:1px" checked></span>
         </span>
     </div>
-    <div class="input-prepend input-append" style="padding-right:5px">
-        <span class="add-on"><?php echo _('Timezone') ?></span>
-        <span class="timezone-options" >
-            <select id="timezone" >
-                <optgroup label="<?php echo _('System') ?>">
-                    <option id="browser_timezone"></option>
-                    <option id="user_timezone"></option>
-                </optgroup>
-                <optgroup label="<?php echo _('World Timezones') ?>" id="all_timezones">
-                </optgroup>
-            </select>
-        </span>
-    </div>
     <div id="yaxis_left" class="input-append input-prepend">
         <span id="yaxis-left" class="add-on"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
         <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
@@ -409,49 +396,4 @@
     printf("var translations = %s;\n",json_encode($translations));
     ?>
 
-</script>
-
-
-<script>
-    $(function () {
-        var user = {};
-        var timezones = [];
-        var $timezone = $('#timezone');
-        var $all_timezones = $('#all_timezones');
-        var $user_timezone = $('#user_timezone');
-        var $browser_timezone = $('#browser_timezone');
-
-        $.getJSON(path + 'user/gettimezones.json')
-        .done( function(result) {
-            var out = '';
-            for (t in result) {
-                var tz = result[t];
-                out += '<option value="' + tz.id + '">' + tz.id + ' (' + tz.gmt_offset_text + ')</option>';
-                timezones[tz.id] = {
-                    label: tz.gmt_offset_text,
-                    value: tz.gmt_offset_secs
-                }
-            }
-            $all_timezones.html(out);
-        }).then( function() {
-            $.getJSON(path + 'user/get.json')
-            .done( function(response) {
-                if(response.hasOwnProperty('success') && response.success === false) {
-                    $user_timezone.text(_('User') +': ' + _('Authentication Required'));
-                } else {
-                    let user = response;
-                    $user_timezone.val(user.timezone).text(_('User') +': ' + user.timezone +' (' + timezones[user.timezone].label + ')');
-                }
-            })
-            
-            let browser_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            let label = timezones.hasOwnProperty(browser_tz) ? timezones[browser_tz].label : browser_tz;
-            $browser_timezone.val(browser_tz).text(_('Browser') +': ' + browser_tz + ' ('+ label + ')');
-        })
-
-        $timezone.on('change', function(event) {
-            graph_changeTimezone($(event.target).val());
-        });
-
-    })
 </script>

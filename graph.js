@@ -31,8 +31,6 @@ var previousPoint = 0;
 
 var active_histogram_feed = 0;
 
-var _TIMEZONE = null;
-
 $("#info").show();
 if ($("#showmissing")[0]!=undefined) $("#showmissing")[0].checked = showmissing;
 if ($("#showtag")[0]!=undefined) $("#showtag")[0].checked = showtag;
@@ -156,7 +154,6 @@ function datetimepickerInit()
         if (Math.abs(view.datetimepicker_previous - e.date.getTime()) > 1000*60*60*24)
         {
             var d = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
-            d.setTime( d.getTime() - e.date.getTimezoneOffset()*60*1000 );
             var out = d;
             $('#datetimepicker1').data("datetimepicker").setDate(out);
         } else {
@@ -172,7 +169,6 @@ function datetimepickerInit()
         if (Math.abs(view.datetimepicker_previous - e.date.getTime()) > 1000*60*60*24)
         {
             var d = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
-            d.setTime( d.getTime() - e.date.getTimezoneOffset()*60*1000 );
             var out = d;
             $('#datetimepicker2').data("datetimepicker").setDate(out);
         } else {
@@ -594,11 +590,6 @@ function graph_reloaddraw() {
     graph_reload();
 }
 
-function graph_changeTimezone(tz) {
-    _TIMEZONE = tz;
-    graph_draw();
-}
-
 function graph_reload()
 {
     var intervalms = view.interval * 1000;
@@ -632,13 +623,14 @@ function graph_reload()
         ids: ids.join(','),
         start: view.start,
         end: view.end,
-        interval: view.interval,
         skipmissing: skipmissing,
         limitinterval: view.limitinterval,
         apikey: apikey
     }
     if (requesttype!="interval") {
         data.mode = requesttype;
+    } else {
+        data.interval = view.interval;
     }
 
     if (ids.length + average_ids.length === 0) {
@@ -866,7 +858,6 @@ function build_rows(rows) {
 
 function graph_draw()
 {
-    var timezone = _TIMEZONE || "browser";
     var options = {
         lines: { fill: false },
         xaxis: {
