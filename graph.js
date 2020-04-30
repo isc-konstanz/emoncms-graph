@@ -1,3 +1,6 @@
+//----------------------------------------------------------------------------------------
+// graph.js used by both view.php and embed.php
+//----------------------------------------------------------------------------------------
 var feeds = [];
 feedlist = [];
 var plotdata = [];
@@ -28,14 +31,11 @@ var current_graph_id = "";
 var current_graph_name = "";
 
 var previousPoint = 0;
-
 var active_histogram_feed = 0;
 
-$("#info").show();
-if ($("#showmissing")[0]!=undefined) $("#showmissing")[0].checked = showmissing;
-if ($("#showtag")[0]!=undefined) $("#showtag")[0].checked = showtag;
-if ($("#showlegend")[0]!=undefined) $("#showlegend")[0].checked = showlegend;
-
+//----------------------------------------------------------------------------------------
+// Events shared by both view and embed mode
+//----------------------------------------------------------------------------------------
 $("#graph_zoomout").click(function () {floatingtime=0; view.zoomout(); graph_reload();});
 $("#graph_zoomin").click(function () {floatingtime=0; view.zoomin(); graph_reload();});
 $('#graph_right').click(function () {floatingtime=0; view.panright(); graph_reload();});
@@ -59,15 +59,6 @@ $('#placeholder').bind("plotselected", function (event, ranges) {
     view.calc_interval();
     graph_reload();
 });
-function getFeedUnit(id){
-    let unit = ''
-    for(let key in feeds) {
-        if (feeds[key].id == id){
-            unit = feeds[key].unit || ''
-        }
-    }
-    return unit
-}
 $('#placeholder').bind("plothover", function (event, pos, item) {
     var item_value;
     if (item) {
@@ -95,12 +86,13 @@ $('#placeholder').bind("plothover", function (event, pos, item) {
 });
 
 // on finish sidebar hide/show
-$(document).on('window.resized hidden.sidebar.collapse shown.sidebar.collapse', function(){
+$(document).on('window.resized hidden.sidebar.collapse shown.sidebar.collapse', function() {
     graph_resize();
     graph_draw();
 })
 
-function graph_resize() {
+function graph_resize() 
+{
     var top_offset = 0;
     if (embed) top_offset = 35;
     var placeholder_bound = $('#placeholder_bound');
@@ -115,6 +107,7 @@ function graph_resize() {
     placeholder_bound.height(height-top_offset);
     placeholder.height(height-top_offset);
 }
+
 function datetimepickerInit()
 {
     $("#datetimepicker1").datetimepicker({
@@ -125,23 +118,16 @@ function datetimepickerInit()
         language: 'en-EN'
     });
 
+    // only used in embed mode
     $('.navigation-timewindow').click(function () {
         $("#navigation-timemanual").show();
         $("#navigation").hide();
     });
 
+    // only used in embed mode
     $('.navigation-timewindow-set').click(function () {
-        var timewindow_start = parseTimepickerTime($("#request-start").val());
-        var timewindow_end = parseTimepickerTime($("#request-end").val());
-        if (!timewindow_start) {alert("Please enter a valid start date."); return false; }
-        if (!timewindow_end) {alert("Please enter a valid end date."); return false; }
-        if (timewindow_start>=timewindow_end) {alert("Start date must be further back in time than end date."); return false; }
-
         $("#navigation-timemanual").hide();
         $("#navigation").show();
-        view.start = timewindow_start * 1000;
-        view.end = timewindow_end *1000;
-
         reloadDatetimePrep();
         graph_reload();
     });
@@ -165,40 +151,9 @@ function reloadDatetimePrep()
     view.end = timewindowEnd*1000;
 }
 
-function csvShowHide(set)
-{
-    var action="hide";
-
-    if (set==="swap") {
-        if ($("#showcsv").html()==_lang["Show CSV Output"]) {
-            action="show";
-        } else {
-            action="hide";
-        }
-    } else {
-        action = (set==="1" ? "show" : "hide");
-    }
-
-    if (action==="show") {
-        printcsv()
-        showcsv = 1;
-        $("#csv").show();
-        $(".csvoptions").show();
-        $("#showcsv").html(_lang["Hide CSV Output"]);
-    } else {
-        showcsv = 0;
-        $("#csv").hide();
-        $(".csvoptions").hide();
-        $("#showcsv").html(_lang["Show CSV Output"]);
-    }
-}
-
-
-function arrayMove(array,old_index, new_index){
-    array.splice(new_index, 0, array.splice(old_index, 1)[0]);
-    return array;
-}
-
+//----------------------------------------------------------------------------------------
+// Side bar feed selector and events associated with editor only, not loaded in embed mode
+//----------------------------------------------------------------------------------------
 function graph_init_editor()
 {
     if (!session && !userid) feeds = feedlist;
@@ -213,6 +168,8 @@ function graph_init_editor()
         feedsbytag[feeds[z].tag].push(feeds[z]);
     }
 
+    // Draw sidebar feed selector -------------------------------------------
+    
     var out = "";
     out += "<colgroup>";
     out += "<col span='1' style='width: 70%;'>";
@@ -249,7 +206,14 @@ function graph_init_editor()
         $(".tagbody").hide();
     }
 
+    $("#info").show();
+    if ($("#showmissing")[0]!=undefined) $("#showmissing")[0].checked = showmissing;
+    if ($("#showtag")[0]!=undefined) $("#showtag")[0].checked = showtag;
+    if ($("#showlegend")[0]!=undefined) $("#showlegend")[0].checked = showlegend;
+
     datetimepickerInit();
+
+    // Events start here -------------------------------------------
 
     $("#reload").click(function(){
         reloadDatetimePrep();
@@ -531,6 +495,17 @@ function graph_init_editor()
         $(".feed-options-show-stats").removeClass('hide');
         event.preventDefault();
     });
+        
+    /**
+     * show sidebar if mobile view hiding sidebar
+     */
+    $(document).on('click', '.alert a.open-sidebar', function(event) {
+        if (typeof show_sidebar !== 'undefined') {
+            show_sidebar();
+            // @todo: ensure the 3rd level graph menu is open
+        }
+        return false;
+    });
 }
 
 function pushfeedlist(feedid, yaxis) {
@@ -539,9 +514,7 @@ function pushfeedlist(feedid, yaxis) {
 
     if (f==false) f = getfeedpublic(feedid);
     if (f!=false) {
-        if (f.datatype==2 || f.value % 1 !== 0 ) {
-            dp=1;
-        }
+        if (f.datatype==2 || f.value % 1 !== 0 ) dp=1;
         feedlist.push({id:feedid, name:f.name, tag:f.tag, yaxis:yaxis, fill:0, scale: 1.0, delta:false, getaverage:false, dp:dp, plottype:'lines'});
     }
 }
@@ -635,16 +608,6 @@ function graph_reload()
         .done(checkFeedlistData);
     }
 }
-/**
- * show sidebar if mobile view hiding sidebar
- */
-$(document).on('click', '.alert a.open-sidebar', function(event) {
-    if (typeof show_sidebar !== 'undefined') {
-        show_sidebar();
-        // @todo: ensure the 3rd level graph menu is open
-    }
-    return false;
-});
 
 function addFeedlistData(response){
     // loop through feedlist and add response data to data property
@@ -1063,6 +1026,16 @@ function getfeedindex(id)
     return false;
 }
 
+function getFeedUnit(id){
+    let unit = ''
+    for(let key in feeds) {
+        if (feeds[key].id == id){
+            unit = feeds[key].unit || ''
+        }
+    }
+    return unit
+}
+
 //----------------------------------------------------------------------------------------
 // Print CSV
 //----------------------------------------------------------------------------------------
@@ -1160,9 +1133,36 @@ function printcsv()
     $("#csv").val(csvout);
 }
 
-//----------------------------------------------------------------------------------------
+function csvShowHide(set)
+{
+    var action="hide";
+
+    if (set==="swap") {
+        if ($("#showcsv").html()==_lang["Show CSV Output"]) {
+            action="show";
+        } else {
+            action="hide";
+        }
+    } else {
+        action = (set==="1" ? "show" : "hide");
+    }
+
+    if (action==="show") {
+        printcsv()
+        showcsv = 1;
+        $("#csv").show();
+        $(".csvoptions").show();
+        $("#showcsv").html(_lang["Hide CSV Output"]);
+    } else {
+        showcsv = 0;
+        $("#csv").hide();
+        $(".csvoptions").hide();
+        $("#showcsv").html(_lang["Show CSV Output"]);
+    }
+}
+// ----------------------------------------------------------------------
 // Histogram feature
-//----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
 // Launch histogram mode for a given feed
 $("body").on("click",".histogram",function(){
@@ -1259,7 +1259,9 @@ function histogram(feedid,type,resolution)
     $.plot("#placeholder",[{label:label, data:histogram}], options);
 }
 
-
+// ----------------------------------------------------------------------
+// Saved graphs
+// ----------------------------------------------------------------------
 var saveGraphsApp = new Vue({
     el: '#my_graphs',
     data: {
@@ -1684,6 +1686,10 @@ function graph_delete(id) {
     return ajax
 }
 
+// ----------------------------------------------------------------------
+// Misc functions
+// ----------------------------------------------------------------------
+
 /**
  * return -1 for less than, 1 for more than, else 0
  * @param {Object} a 
@@ -1761,4 +1767,9 @@ function download_data(filename, data) {
         elem.click();        
         document.body.removeChild(elem);
     }
+}
+
+function arrayMove(array,old_index, new_index){
+    array.splice(new_index, 0, array.splice(old_index, 1)[0]);
+    return array;
 }
