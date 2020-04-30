@@ -56,7 +56,7 @@ var view =
       var npoints = 600;
       var interval = Math.round(((this.end - this.start)*0.001)/npoints);
       
-      var outinterval = 5;
+      var outinterval = 10;
       if (interval>10) outinterval = 10;
       if (interval>15) outinterval = 15;
       if (interval>20) outinterval = 20;

@@ -565,6 +565,9 @@ function graph_reload()
         if (ds.getFullYear()==de.getFullYear()) year_offset = 1; 
         view.start = (new Date(ds.getFullYear(), 0, 1, 0,0,0,0)).getTime();
         view.end = (new Date(de.getFullYear()+1, 0, 1, 0,0,0,0)).getTime();
+    } else {
+        view.start = Math.floor((view.start*0.001) / view.interval) * view.interval * 1000;
+        view.end = Math.ceil((view.end*0.001) / view.interval) * view.interval * 1000;
     }
 
     if(datetimepicker1) {
