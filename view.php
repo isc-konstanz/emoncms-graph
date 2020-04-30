@@ -131,10 +131,10 @@
         <span class="add-on" style="width:50px"><?php echo _('Type') ?></span>
         <select id="request-type" style="width:130px">
             <option value="interval"><?php echo _('Fixed Interval') ?></option>
-            <option><?php echo _('Daily') ?></option>
-            <option><?php echo _('Weekly') ?></option>
-            <option><?php echo _('Monthly') ?></option>
-            <option><?php echo _('Annual') ?></option>
+            <option value="daily"><?php echo _('Daily') ?></option>
+            <option value="weekly"><?php echo _('Weekly') ?></option>
+            <option value="monthly"><?php echo _('Monthly') ?></option>
+            <option value="annual"><?php echo _('Annual') ?></option>
         </select>
         
     </div>
@@ -146,24 +146,25 @@
             <span class="add-on"><?php echo _('Limit to data interval') ?> <input id="request-limitinterval" type="checkbox" style="margin-top:1px" checked></span>
         </span>
     </div>
-    <div id="yaxis_left" class="input-append input-prepend">
-        <span id="yaxis-left" class="add-on"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
-        <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
-        <input class="yaxis-minmax" id="yaxis-min" type="text" value="auto">
-        <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
-        <input class="yaxis-minmax" id="yaxis-max" type="text" value="auto">
-        <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
+    <div>
+        <div id="yaxis_left" class="input-append input-prepend">
+            <span id="yaxis-left" class="add-on"><?php echo _('Y-axis').' ('._('Left').')' ?>:</span>
+            <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
+            <input class="yaxis-minmax" id="yaxis-min" type="text" value="auto">
+            <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
+            <input class="yaxis-minmax" id="yaxis-max" type="text" value="auto">
+            <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
+        </div>
+        <div id="yaxis_right" class="input-append input-prepend">
+            <span id="yaxis-right" class="add-on"><?php echo _('Y-axis').' ('._('Right').')' ?>:</span>
+            <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
+            <input class="yaxis-minmax" id="yaxis-min2" type="text" value="auto">
+            <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
+            <input class="yaxis-minmax" id="yaxis-max2" type="text" value="auto">
+            <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
+        </div>
+        <button id="reload" class="btn" style="vertical-align:top"><?php echo _('Reload') ?></button>
     </div>
-    <div id="yaxis_right" class="input-append input-prepend">
-        <span id="yaxis-right" class="add-on"><?php echo _('Y-axis').' ('._('Right').')' ?>:</span>
-        <span class="yaxis-minmax-label add-on"><?php echo _('min') ?></span>
-        <input class="yaxis-minmax" id="yaxis-min2" type="text" value="auto">
-        <span class="yaxis-minmax-label add-on"><?php echo _('max') ?></span>
-        <input class="yaxis-minmax" id="yaxis-max2" type="text" value="auto">
-        <button class="btn reset-yaxis"><?php echo _('Reset') ?></button>
-    </div>
-
-    <button id="reload" class="btn" style="vertical-align:top"><?php echo _('Reload') ?></button>
     
     <div id="window-info" style=""></div><br>
     
@@ -261,7 +262,7 @@
     }
     _locale_loaded = function (event){
         // callback when locale file loaded
-        graph_reloaddraw(); // redraw xaxis with correct monthNames and dayNames
+        graph_reload(); // redraw xaxis with correct monthNames and dayNames
     }
 </script>
 <script src="<?php echo $path; ?>Lib/user_locale.js"></script>
@@ -371,7 +372,7 @@
     view.end = now;
     view.calc_interval();
     
-    graph_reloaddraw();
+    graph_reload();
 
     $(function(){
         // manually add hide/show

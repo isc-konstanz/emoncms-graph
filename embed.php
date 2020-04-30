@@ -124,8 +124,11 @@
         dataType: "json",
         success: function(result) {
             
+            if (result.mode==undefined) result.mode = 'interval';
+            
             view.start = result.start;
             view.end = result.end;
+            view.mode = result.mode;
             view.interval = result.interval;
             view.limitinterval = result.limitinterval;
             view.fixinterval = result.fixinterval;
@@ -157,7 +160,7 @@
 
             datetimepickerInit();
             graph_resize();
-            graph_reloaddraw();
+            graph_reload();
         }
     });
     

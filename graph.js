@@ -36,31 +36,28 @@ if ($("#showmissing")[0]!=undefined) $("#showmissing")[0].checked = showmissing;
 if ($("#showtag")[0]!=undefined) $("#showtag")[0].checked = showtag;
 if ($("#showlegend")[0]!=undefined) $("#showlegend")[0].checked = showlegend;
 
-$("#graph_zoomout").click(function () {floatingtime=0; view.zoomout(); graph_reloaddraw();});
-$("#graph_zoomin").click(function () {floatingtime=0; view.zoomin(); graph_reloaddraw();});
-$('#graph_right').click(function () {floatingtime=0; view.panright(); graph_reloaddraw();});
-$('#graph_left').click(function () {floatingtime=0; view.panleft(); graph_reloaddraw();});
+$("#graph_zoomout").click(function () {floatingtime=0; view.zoomout(); graph_reload();});
+$("#graph_zoomin").click(function () {floatingtime=0; view.zoomin(); graph_reload();});
+$('#graph_right').click(function () {floatingtime=0; view.panright(); graph_reload();});
+$('#graph_left').click(function () {floatingtime=0; view.panleft(); graph_reload();});
 $('.graph_time').change(function () {
     floatingtime=1;
     view.timewindow($(this).val()/24.0);
-    graph_reloaddraw();
-    console.log("graph_time change");
+    view.calc_interval();
+    graph_reload();
 });
 $('.graph_time_refresh').click(function () {
     floatingtime=1;
     view.timewindow($('.graph_time').val()/24.0);
-    graph_reloaddraw();
-    console.log("graph_time click");
+    view.calc_interval();
+    graph_reload();
 });
-
-$('#placeholder').bind("plotselected", function (event, ranges)
-{
+$('#placeholder').bind("plotselected", function (event, ranges) {
     floatingtime=0;
     view.start = ranges.xaxis.from;
     view.end = ranges.xaxis.to;
     view.calc_interval();
-
-    graph_reloaddraw();
+    graph_reload();
 });
 function getFeedUnit(id){
     let unit = ''
@@ -146,38 +143,11 @@ function datetimepickerInit()
         view.end = timewindow_end *1000;
 
         reloadDatetimePrep();
-        graph_reloaddraw();
+        graph_reload();
     });
 
-    $('#datetimepicker1').on("changeDate", function (e) {
-        if (view.datetimepicker_previous == null) view.datetimepicker_previous = view.start;
-        if (Math.abs(view.datetimepicker_previous - e.date.getTime()) > 1000*60*60*24)
-        {
-            var d = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
-            var out = d;
-            $('#datetimepicker1').data("datetimepicker").setDate(out);
-        } else {
-            var out = e.date;
-        }
-        view.datetimepicker_previous = e.date.getTime();
-
-        $('#datetimepicker2').data("datetimepicker").setStartDate(out);
-    });
-
-    $('#datetimepicker2').on("changeDate", function (e) {
-        if (view.datetimepicker_previous == null) view.datetimepicker_previous = view.end;
-        if (Math.abs(view.datetimepicker_previous - e.date.getTime()) > 1000*60*60*24)
-        {
-            var d = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate());
-            var out = d;
-            $('#datetimepicker2').data("datetimepicker").setDate(out);
-        } else {
-            var out = e.date;
-        }
-        view.datetimepicker_previous = e.date.getTime();
-
-        $('#datetimepicker1').data("datetimepicker").setEndDate(out);
-    });
+    // $('#datetimepicker1').on("changeDate", function (e) { }); // Could use for rounding on selection
+    // $('#datetimepicker2').on("changeDate", function (e) { }); // Could use for rounding on selection
 
     datetimepicker1 = $('#datetimepicker1').data('datetimepicker');
     datetimepicker2 = $('#datetimepicker2').data('datetimepicker');
@@ -283,11 +253,9 @@ function graph_init_editor()
 
     $("#reload").click(function(){
         reloadDatetimePrep();
-
         view.interval = $("#request-interval").val();
         view.limitinterval = $("#request-limitinterval")[0].checked*1;
-
-        graph_reloaddraw();
+        graph_reload();
     });
 
     $("#showcsv").click(function(){
@@ -390,13 +358,8 @@ function graph_init_editor()
                }
            }
         }
-
-        //if (loaded==false && checked) {
-        //    var index = getfeedindex(feedid);
-        //    feedlist.push({id:feedid, name:feeds[index].name, tag:feeds[index].tag, yaxis:1, fill:0, scale: 1.0, delta:false, getaverage:false, dp:1, plottype:'lines'});
-        //}
         if (loaded==false && checked) pushfeedlist(feedid, 1);
-        graph_reloaddraw();
+        graph_reload();
     });
 
     $("body").on("click",".feed-select-right",function(){
@@ -415,15 +378,12 @@ function graph_init_editor()
                }
            }
         }
-
-        // if (loaded==false && checked) feedlist.push({id:feedid, yaxis:2, fill:0, scale: 1.0, delta:false, getaverage:false, dp:1, plottype:'lines'});
         if (loaded==false && checked) pushfeedlist(feedid, 2);
-        graph_reloaddraw();
+        graph_reload();
     });
 
     $("body").on("click keyup",".tagheading",function(event){
         let enterKey = 13;
-        // console.log(event.type,event.which);
 
         if((event.type === 'keyup' && event.which === enterKey) || event.type === 'click') {
             var tag = $(this).data("tag");
@@ -459,26 +419,26 @@ function graph_init_editor()
 
     $("#request-type").val("interval");
     $("#request-type").change(function() {
-        var type = $(this).val();
-        type = type.toLowerCase();
+        var mode = $(this).val();
 
-        if (type!="interval") {
+        if (mode!="interval") {
             $(".fixed-interval-options").hide();
             view.fixinterval = true;
         } else {
             $(".fixed-interval-options").show();
             view.fixinterval = false;
         }
-
-        requesttype = type;
+        view.mode = mode
 
         // Intervals are set here for bar graph bar width sizing
-        if (type=="daily") view.interval = 86400;
-        if (type=="weekly") view.interval = 86400*7;
-        if (type=="monthly") view.interval = 86400*30;
-        if (type=="annual") view.interval = 86400*365;
+        // and for changing between interval and daily, weekly, monthly, annual modes
+        if (mode=="daily") view.interval = 86400;
+        if (mode=="weekly") view.interval = 86400*7;
+        if (mode=="monthly") view.interval = 86400*30;
+        if (mode=="annual") view.interval = 86400*365;
 
         $("#request-interval").val(view.interval);
+        graph_reload();
     });
 
     $("body").on("change",".decimalpoints",function(){
@@ -586,15 +546,26 @@ function pushfeedlist(feedid, yaxis) {
     }
 }
 
-function graph_reloaddraw() {
-    graph_reload();
-}
-
 function graph_reload()
 {
-    var intervalms = view.interval * 1000;
-    view.start = Math.round(view.start / intervalms) * intervalms;
-    view.end = Math.round(view.end / intervalms) * intervalms;
+    var ds = new Date(view.start);
+    var de = new Date(view.end);
+    
+    // Round start and end time
+    if (view.mode=="daily" || view.mode=="weekly") {
+        view.start = (new Date(ds.getFullYear(), ds.getMonth(), ds.getDate(), 0,0,0,0)).getTime();
+        view.end = (new Date(de.getFullYear(), de.getMonth(), de.getDate(), 0,0,0,0)).getTime();
+    } else if (view.mode=="monthly") {
+        var month_offset = 0;
+        if (ds.getMonth()==de.getMonth()) month_offset = 1; 
+        view.start = (new Date(ds.getFullYear(), ds.getMonth(), 1, 0,0,0,0)).getTime();
+        view.end = (new Date(de.getFullYear(), de.getMonth()+month_offset, 1, 0,0,0,0)).getTime();
+    } else if (view.mode=="annual") {
+        var year_offset = 0;
+        if (ds.getFullYear()==de.getFullYear()) year_offset = 1; 
+        view.start = (new Date(ds.getFullYear(), 0, 1, 0,0,0,0)).getTime();
+        view.end = (new Date(de.getFullYear()+1, 0, 1, 0,0,0,0)).getTime();
+    }
 
     if(datetimepicker1) {
         datetimepicker1.setLocalDate(new Date(view.start));
@@ -627,8 +598,8 @@ function graph_reload()
         limitinterval: view.limitinterval,
         apikey: apikey
     }
-    if (requesttype!="interval") {
-        data.mode = requesttype;
+    if (view.mode!="interval") {
+        data.mode = view.mode;
     } else {
         data.interval = view.interval;
     }
@@ -1553,11 +1524,13 @@ function load_saved_graph(graph) {
     // @todo: unload_saved_graph()
     
     if(typeof graph === 'undefined') return;
-
+    if (graph.mode==undefined) graph.mode = 'interval';
+    
     // view settings
     view.start = graph.start;
     view.end = graph.end;
     view.interval = graph.interval;
+    view.mode = graph.mode;
     view.limitinterval = graph.limitinterval;
     view.fixinterval = graph.fixinterval;
     floatingtime = graph.floatingtime,
@@ -1600,8 +1573,16 @@ function load_saved_graph(graph) {
     $("#showmissing")[0].checked = showmissing;
     $("#showtag")[0].checked = showtag;
     $("#showlegend")[0].checked = showlegend;
+    
+    $("#request-type").val(view.mode);
+    if (view.mode!="interval") {
+        $(".fixed-interval-options").hide();
+    } else {
+        $(".fixed-interval-options").show();
+    }
+    
     // draw graph
-    graph_reloaddraw();
+    graph_reload();
     load_feed_selector();
     // Placed after graph load as values only available after the graph is redrawn
     $("#csvtimeformat").val(csvtimeformat);
@@ -1623,6 +1604,7 @@ function get_graph_data () {
         start: view.start,
         end: view.end,
         interval: view.interval,
+        mode: view.mode,
         limitinterval: view.limitinterval,
         fixinterval: view.fixinterval,
         floatingtime: floatingtime,
