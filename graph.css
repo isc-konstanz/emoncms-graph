@@ -42,7 +42,6 @@
 /* sidebar #graph-list */
 #graph-list {
     overflow: hidden;
-    padding-right: 10px;
 }
 #graph-list select {
     width: 100%;
@@ -240,7 +239,7 @@ table#feeds.table tbody tr th {
 }
 table#feeds.table tbody tr th.feed-title span {
     vertical-align: middle;
-    max-width: 9em;
+    max-width: 8em;
 }
 table#feeds.table .caret {
     display: inline-block;
